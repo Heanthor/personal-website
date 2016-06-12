@@ -25,7 +25,7 @@ SECRET_KEY = '@yuzccqz!1q&i1i)t2+29*9*s4r(m&tplc1q19c+u+5%anwid%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["rtrevelyan.com"]
 
 
 # Application definition
@@ -128,7 +128,5 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
 SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
 
 X_FRAME_OPTIONS = "DENY"
