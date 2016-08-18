@@ -11,19 +11,21 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+import json
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+with open("config.json", 'r') as f:
+    config_file = json.loads(f.read().strip())
+    # Quick-start development settings - unsuitable for production
+    # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
+    # SECURITY WARNING: keep the secret key used in production secret!
+    SECRET_KEY = config_file["secretKey"]
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRETKEY")
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+    # SECURITY WARNING: don't run with debug turned on in production!
+    DEBUG = config_file["debug"]
 
 if not DEBUG:
     ALLOWED_HOSTS = [".rtrevelyan.com"]
@@ -40,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'personal_website',
-    'bootstrapform',
+    'bootstrapform'
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -129,6 +131,7 @@ STATIC_URL = '/static/'
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-SESSION_COOKIE_SECURE = True
+if DEBUG:
+    SESSION_COOKIE_SECURE = True
 
 X_FRAME_OPTIONS = "DENY"
