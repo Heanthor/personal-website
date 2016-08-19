@@ -131,7 +131,9 @@ STATIC_URL = '/static/'
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-if DEBUG:
-    SESSION_COOKIE_SECURE = True
+# if DEBUG:
+#     SESSION_COOKIE_SECURE = True
 
 X_FRAME_OPTIONS = "DENY"
+
+print "Settings succesfully parsed"
