@@ -7,6 +7,10 @@ body {
     text-align: center;
 }
 
+.popover{
+    max-width: 100%; /* Max Width of the popover (depending on the container!) */
+}
+
 /* custom navbar */
 .navbar-default {
     background-color: #3c6ee7;

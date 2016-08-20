@@ -3,36 +3,55 @@
 {% block title %}Grocery List{% endblock %}
 {% block nav-grocery-list %}class="active"{% endblock %}
 {% block content %}
-
-<div class="container">
-    <div style="padding: 40px"></div>
-    <div id="results"></div>
-    <form class="form-inline" method="post" id="submit_form">
-        {% csrf_token %}
-        <ul class="list-group" id="main_list">
-            <li class="list-group-item">
-                <label for="add">Add Item:</label>
-                <span class="input-group-btn">
+    <div class="container">
+        <div style="padding: 40px"></div>
+        <div id="results"></div>
+        <form class="form-inline" method="post" id="submit_form">
+            {% csrf_token %}
+            <ul class="list-group" id="main_list">
+                <li class="list-group-item">
+                    <label for="add">Add Item:</label>
+                    <span class="input-group-btn">
                     {{ form|bootstrap_inline }}
                     <input type="submit" class="btn btn-default" value="Add">
-                    <input type="button" id="removeAll" class="btn btn-default pull-right" value="Remove All">
+                    <input type="button" id="grocery_store" class="btn btn-default pull-right"
+                           value="Log Grocery Store Visit"
+                           data-toggle="popover" data-placement="bottom">
                 </span>
-            </li>
-            {% for item in items_list %}
-                <li class="list-group-item grocery_item" id="{{ item.id }}">
-                    <span class="label label-default">{{ item.quantity }}</span>
-                    {{ item.name }}
-                    <button type="button" class="btn btn-xs pull-right trash-button" href="#{{ item.id }}">
-                        <span class="delete-text" hidden>Delete</span>
-                        <span class="glyphicon glyphicon-trash"></span>
-                    </button>
-                    <p style="padding-top: 5px" hidden>
-                        <span class="text-muted" style="padding-left: 1em">Added {{ item.date_added }}</span>
-                    </p>
                 </li>
-            {% endfor %}
-        </ul>
-    </form>
-</div>
+                {% for item in items_list %}
+                    <li class="list-group-item grocery_item" id="{{ item.id }}">
+                        <span class="label label-default">{{ item.quantity }}</span>
+                        {{ item.name }}
+                        <button type="button" class="btn btn-xs pull-right trash-button" href="#{{ item.id }}">
+                            <span class="delete-text" hidden>Delete</span>
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                        <p style="padding-top: 5px" hidden>
+                            <span class="text-muted" style="padding-left: 1em">Added {{ item.date_added }}</span>
+                        </p>
+                    </li>
+                {% endfor %}
+            </ul>
+        </form>
+
+        <div id="popover_content_wrapper" style="display: none">
+            <form class="form-inline">
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">$</span>
+                        <input type="number" id="price" class="form-control" name="price"
+                               placeholder="45.00" min="0">
+                    </div>
+                </div>
+                <br/>
+                <div class="form-group">
+                    <div>
+                        <button type="button" class="btn btn-default" id="log_reset">Log and Reset</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
 {% endblock %}
