@@ -15,7 +15,6 @@ $(function () {
     });
 
     ml.hoverIntent({
-        // TODO doesn't work for dynamically created elements
         over: function () {
             $(this).find(".text-muted").parent().fadeIn(100);
         },
@@ -25,6 +24,14 @@ $(function () {
         selector: '.list-group-item'
     });
 
+    $("#removeAll").click(function () {
+        if ($(this).hasClass("btn-warning")) {
+            removeAll()
+        } else {
+            $(this).val("Confirm");
+            $(this).addClass("btn-warning");
+        }
+    });
 
     // Source: https://realpython.com/blog/python/django-and-ajax-form-submissions/
     // This function gets cookie with a given name
@@ -156,6 +163,12 @@ $(function () {
                     " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                 alert(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
             }
+        });
+    }
+
+    function removeAll() {
+        $(".grocery_item").each(function() {
+            deleteEntry($(this).attr("id"));
         });
     }
 });
