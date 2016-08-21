@@ -14,6 +14,11 @@ $(function () {
         }
     });
 
+    ml.on('click', '.log_reset', function () {
+        grocery_visit();
+    });
+
+
     ml.hoverIntent({
         over: function () {
             $(this).find(".text-muted").parent().fadeIn(100);
@@ -24,17 +29,15 @@ $(function () {
         selector: '.list-group-item'
     });
 
-    $("#log_reset").click(function() {
-        removeAll();
-    });
 
     // initialize popover
     $('#grocery_store').popover({
         html: true,
-        content: function() {
+        content: function () {
             return $("#popover_content_wrapper").html();
         }
     });
+
 
     // close popover by clicking outside of box
     $(document).on('click', function (e) {
@@ -42,7 +45,7 @@ $(function () {
             //the 'is' for buttons that trigger popups
             //the 'has' for icons within a button that triggers a popup
             if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                (($(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false  // fix for BS 3.3.6
+                (($(this).popover('hide').data('bs.popover') || {}).inState || {}).click = false  // fix for BS 3.3.6
             }
         });
     });
@@ -180,8 +183,45 @@ $(function () {
         });
     }
 
-    function removeAll() {
+    function grocery_visit() {
+        var price = $("#price").val();
+        var items = [];
+
+        if (price == "") {
+            return false;
+        }
+
+        // get all ids of items being purchased
         $(".grocery_item").each(function() {
+            items.push($(this).attr("id"));
+        });
+
+        // send request
+        $.ajax({
+            url: "grocery_list/save_purchase", // the endpoint
+            type: "POST", // http method
+            data: {
+                items: JSON.stringify(items),
+                price: price
+            }, // data sent with the post request
+
+            // handle a successful response
+            success: function (json) {
+                console.log(json);
+                $("#price").val("");
+            },
+
+            // handle a non-successful response
+            error: function (xhr, errmsg, err) {
+                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                alert(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    }
+
+    function removeAll() {
+        $(".grocery_item").each(function () {
             deleteEntry($(this).attr("id"));
         });
     }

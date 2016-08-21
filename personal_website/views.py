@@ -1,19 +1,15 @@
 from __future__ import print_function
 
 import json
-import datetime
 
-from django.shortcuts import render
 from django.http import HttpResponse
-from django.utils import timezone, dateformat
+from django.shortcuts import render
 
-from models import Item
 from forms import AddItemForm
+from models import Item, GroceryVisit
 
-from django.core.exceptions import ObjectDoesNotExist
-
-
-# Create your views here.
+from personal_website.item_actions import delete_item_ajax, add_item_ajax
+from django.views.decorators.http import require_http_methods
 
 
 def index(request):
@@ -43,41 +39,18 @@ def grocery_list(request):
         return render(request, "personal_website/grocery_list.html", context)
 
 
-def delete_item_ajax(request):
-    id_to_delete = request.POST.get("id")
-    Item.objects.filter(pk=id_to_delete).delete()
+@require_http_methods(["POST"])
+def save_purchase(request):
+    response = {"status": "Success"}
+    items = map(int, json.loads(request.POST.get("items")))
+    price = float(request.POST.get("price"))
 
-    return {"status": "Success"}
+    print ("Price in: %d, items in: %s" % (price, items))
+    gv = GroceryVisit(price=price)
+    gv.save()
 
+    # update all items purchased in this grocery visit
+    for item_id in items:
+        Item.objects.filter(id=item_id).update(grocery_visit=gv)
 
-def add_item_ajax(request):
-    # ajax
-    # extract from post
-    item_name = request.POST.get("item_name")
-    item_quantity = request.POST.get("item_quantity")
-    date_added = timezone.now()
-    date_added_str = dateformat.format(datetime.datetime.now(), 'F j, Y, P')
-    response = {"item_name": item_name,
-                "item_quantity": item_quantity,
-                "date_added": date_added_str}
-    # check if item in db already
-    try:
-        tmp = Item.objects.get(name=item_name)
-
-        # item is in db, update quantity
-        response["add"] = "true"
-        response["id"] = tmp.id
-        current_quantity = tmp.quantity
-        updated_quantity = int(current_quantity) + int(item_quantity)
-
-        # update count
-        Item.objects.filter(name=item_name).update(quantity=updated_quantity)
-        response["item_quantity"] = updated_quantity
-    except ObjectDoesNotExist:
-        # object was not in db
-        # create Item and save
-        i = Item(name=item_name, quantity=item_quantity, date_added=date_added)
-        i.save()
-        response["id"] = i.id
-    response["status"] = "Success"
-    return response
+    return HttpResponse(json.dumps(response), content_type="application/json")
