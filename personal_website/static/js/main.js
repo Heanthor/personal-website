@@ -113,7 +113,7 @@ $(function () {
     // AJAX for posting
     function addItem() {
         $.ajax({
-            url: "grocery_list/", // the endpoint
+            url: "grocery_list", // the endpoint
             type: "POST", // http method
             data: {
                 item_name: $.trim($('#item_input').val()),
@@ -161,7 +161,7 @@ $(function () {
 
     function deleteEntry(id) {
         $.ajax({
-            url: "grocery_list/", // the endpoint
+            url: "grocery_list", // the endpoint
             type: "POST", // http method
             data: {
                 delete: "true",
@@ -188,6 +188,7 @@ $(function () {
         var items = [];
 
         if (price == "") {
+            // need to enter a price
             return false;
         }
 
@@ -209,6 +210,8 @@ $(function () {
             success: function (json) {
                 console.log(json);
                 $("#price").val("");
+
+                removeAll();
             },
 
             // handle a non-successful response

@@ -28,7 +28,8 @@ def grocery_list(request):
                                 content_type="application/json")
     else:
         # normal page load
-        items_list = Item.objects.order_by('date_added')
+        # only show items that are active
+        items_list = Item.objects.filter(archived=False).order_by('date_added')
         form = AddItemForm()
 
         context = {
@@ -45,7 +46,7 @@ def save_purchase(request):
     items = map(int, json.loads(request.POST.get("items")))
     price = float(request.POST.get("price"))
 
-    print ("Price in: %d, items in: %s" % (price, items))
+    print("Price in: %d, items in: %s" % (price, items))
     gv = GroceryVisit(price=price)
     gv.save()
 

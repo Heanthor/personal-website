@@ -22,6 +22,7 @@ class Item(models.Model):
     name = models.CharField(max_length=200)
     quantity = models.IntegerField(default=1)
     date_added = models.DateTimeField('date added to list', default=timezone.now)
+    archived = models.BooleanField('whether this item is in the active grocery list', default=False)
     grocery_visit = models.ForeignKey(GroceryVisit, on_delete=models.CASCADE,
                                       default=None, blank=True, null=True)  # can be null before purchased
 

@@ -8,7 +8,9 @@ from personal_website.models import Item
 
 def delete_item_ajax(request):
     id_to_delete = request.POST.get("id")
-    Item.objects.filter(pk=id_to_delete).delete()
+    # don't actually delete item, tag it archived
+    # this is so it can still be referenced by a grocery visit object later
+    Item.objects.filter(pk=id_to_delete).update(archived=True)
 
     return {"status": "Success"}
 
@@ -23,10 +25,18 @@ def add_item_ajax(request):
     response = {"item_name": item_name,
                 "item_quantity": item_quantity,
                 "date_added": date_added_str}
-    # check if item in db already
-    try:
-        tmp = Item.objects.get(name=item_name)
 
+    # check if item in db already and is not archived
+    results = Item.objects.filter(name=item_name).exclude(archived=True)
+
+    if len(results) == 0:
+        # object was not in db
+        # create Item and save
+        i = Item(name=item_name, quantity=item_quantity, date_added=date_added)
+        i.save()
+        response["id"] = i.id
+    elif len(results) == 1:
+        tmp = results[0]
         # item is in db, update quantity
         response["add"] = "true"
         response["id"] = tmp.id
@@ -36,11 +46,8 @@ def add_item_ajax(request):
         # update count
         Item.objects.filter(name=item_name).update(quantity=updated_quantity)
         response["item_quantity"] = updated_quantity
-    except ObjectDoesNotExist:
-        # object was not in db
-        # create Item and save
-        i = Item(name=item_name, quantity=item_quantity, date_added=date_added)
-        i.save()
-        response["id"] = i.id
+    else:
+        raise RuntimeError("PANIC")
+
     response["status"] = "Success"
     return response
