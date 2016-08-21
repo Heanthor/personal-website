@@ -110,7 +110,22 @@ $(function () {
         addItem();
     });
 
-    // AJAX for posting
+    function displayErrorMessage(message, errorLevelClass) {
+        var ab = $('#alert-box');
+        ab.removeAttr("hidden");
+
+        ab.removeClass();
+        ab.addClass("alert alert-dismissable " + errorLevelClass);
+
+        $("#alert-text").html(message);
+    }
+
+    function displayErrorXHR(xhr, errorLevelClass) {
+        if (xhr != null) {
+            displayErrorMessage(xhr.status + ": " + xhr.responseText, errorLevelClass);
+        }
+    }
+
     function addItem() {
         $.ajax({
             url: "grocery_list", // the endpoint
@@ -136,7 +151,7 @@ $(function () {
                 } else {
                     // add new list item
                     $("#main_list").append(
-                        '<li class="list-group-item" id="' + id + '">\
+                        '<li class="list-group-item grocery_item" id="' + id + '">\
                         <span class="label label-default">' + quantity + '</span>\
                         ' + name + '\
                         <button type="button" class="btn btn-xs pull-right trash-button" href="#{{ item.id }}">\
@@ -151,10 +166,8 @@ $(function () {
             },
 
             // handle a non-successful response
-            error: function (xhr, errmsg, err) {
-                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
-                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                alert(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            error: function (xhr) {
+                displayErrorXHR(xhr, "alert-danger");
             }
         });
     }
@@ -175,10 +188,8 @@ $(function () {
             },
 
             // handle a non-successful response
-            error: function (xhr, errmsg, err) {
-                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
-                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                alert(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            error: function (xhr) {
+                displayErrorXHR(xhr, "alert-danger");
             }
         });
     }
@@ -189,11 +200,12 @@ $(function () {
 
         if (price == "") {
             // need to enter a price
+            displayErrorMessage("You must enter the amount spent on groceries.", "alert-warning");
             return false;
         }
 
         // get all ids of items being purchased
-        $(".grocery_item").each(function() {
+        $(".grocery_item").each(function () {
             items.push($(this).attr("id"));
         });
 
@@ -211,21 +223,25 @@ $(function () {
                 console.log(json);
                 $("#price").val("");
 
-                removeAll();
+                hideAllItems();
+
+                // if an alert is displayed, remove it
+                var ab = $("#alert-box");
+                if (!ab[0].hasAttribute("hidden")) {
+                    ab.attr("hidden", "true");
+                }
             },
 
             // handle a non-successful response
-            error: function (xhr, errmsg, err) {
-                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
-                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                alert(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            error: function (xhr) {
+                displayErrorXHR(xhr, "alert-danger");
             }
         });
     }
 
-    function removeAll() {
+    function hideAllItems() {
         $(".grocery_item").each(function () {
-            deleteEntry($(this).attr("id"));
+            $(this).fadeOut(100);
         });
     }
 });

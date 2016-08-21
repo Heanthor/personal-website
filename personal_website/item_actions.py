@@ -47,7 +47,7 @@ def add_item_ajax(request):
         Item.objects.filter(name=item_name).update(quantity=updated_quantity)
         response["item_quantity"] = updated_quantity
     else:
-        raise RuntimeError("PANIC")
+        raise RuntimeError("Duplicate object %s" % results)
 
     response["status"] = "Success"
     return response

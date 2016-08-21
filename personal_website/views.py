@@ -52,6 +52,7 @@ def save_purchase(request):
 
     # update all items purchased in this grocery visit
     for item_id in items:
-        Item.objects.filter(id=item_id).update(grocery_visit=gv)
+        # added to a gv, archive this item
+        Item.objects.filter(id=item_id).update(grocery_visit=gv, archived=True)
 
     return HttpResponse(json.dumps(response), content_type="application/json")

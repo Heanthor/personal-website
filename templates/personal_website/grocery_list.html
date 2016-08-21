@@ -5,7 +5,12 @@
 {% block content %}
     <div class="container">
         <div style="padding: 40px"></div>
-        <div id="results"></div>
+        <div id="alert-box" class="alert alert-warning alert-dismissable" hidden>
+            <span id="alert-text"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
         <form class="form-inline" method="post" id="submit_form">
             {% csrf_token %}
             <ul class="list-group" id="main_list">
