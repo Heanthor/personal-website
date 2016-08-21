@@ -4,28 +4,28 @@
 {% block nav-grocery-list %}class="active"{% endblock %}
 {% block content %}
     <div class="container">
-        <div style="padding: 40px"></div>
-        <div id="alert-box" class="alert alert-warning alert-dismissable" hidden>
-            <span id="alert-text"></span>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+        <div style="padding: 20px"></div>
+        <div id="alert-box-holder">
         </div>
         <form class="form-inline" method="post" id="submit_form">
             {% csrf_token %}
             <ul class="list-group" id="main_list">
-                <li class="list-group-item">
-                    <label for="add">Add Item:</label>
-                    <span class="input-group-btn">
-                    {{ form|bootstrap_inline }}
-                    <input type="submit" class="btn btn-default" value="Add">
-                    <input type="button" id="grocery_store" class="btn btn-default pull-right"
+                <li class="list-group-item row">
+                    <div class="col-md-6">
+                        <label for="add">Add Item:</label>
+                        <span class="input-group-btn">
+                            {{ form|bootstrap_inline }}
+                            <input type="submit" class="btn btn-primary" id="add" value="Add">
+                        </span>
+                    </div>
+                    <span class="col-md-4">&nbsp;</span>
+                    <input type="button" id="grocery_store"
+                           class="btn btn-default pull-right col-md-3"
                            value="Log Grocery Store Visit"
                            data-toggle="popover" data-placement="bottom">
-                </span>
                 </li>
                 {% for item in items_list %}
-                    <li class="list-group-item grocery_item" id="{{ item.id }}">
+                    <li class="list-group-item grocery_item row" id="{{ item.id }}">
                         <span class="label label-default">{{ item.quantity }}</span>
                         {{ item.name }}
                         <button type="button" class="btn btn-xs pull-right trash-button" href="#{{ item.id }}">
@@ -52,7 +52,7 @@
                 <br/>
                 <div class="form-group">
                     <div>
-                        <button type="button" class="btn btn-default log_reset">Log and Reset</button>
+                        <button type="submit" class="btn btn-default log_reset">Log and Reset</button>
                     </div>
                 </div>
             </form>

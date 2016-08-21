@@ -1,4 +1,30 @@
 $(function () {
+    /*
+     *  Popover
+     */
+    // initialize popover
+    $('#grocery_store').popover({
+        html: true,
+        content: function () {
+            return $("#popover_content_wrapper").html();
+        }
+    });
+
+    // close popover by clicking outside of box
+    $(document).on('click', function (e) {
+        $('[data-toggle="popover"],[data-original-title]').each(function () {
+            //the 'is' for buttons that trigger popups
+            //the 'has' for icons within a button that triggers a popup
+            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                (($(this).popover('hide').data('bs.popover') || {}).inState || {}).click = false  // fix for BS 3.3.6
+            }
+        });
+    });
+
+    /*
+     * Listeners
+     */
+
     var ml = $("#main_list");
 
     // trash button animation
@@ -15,9 +41,9 @@ $(function () {
     });
 
     ml.on('click', '.log_reset', function () {
-        grocery_visit();
+        event.preventDefault();
+        groceryVisit();
     });
-
 
     ml.hoverIntent({
         over: function () {
@@ -29,26 +55,15 @@ $(function () {
         selector: '.list-group-item'
     });
 
-
-    // initialize popover
-    $('#grocery_store').popover({
-        html: true,
-        content: function () {
-            return $("#popover_content_wrapper").html();
-        }
+    // Submit post on submit
+    $('#submit_form').on('submit', function (event) {
+        event.preventDefault();
+        addItem();
     });
 
-
-    // close popover by clicking outside of box
-    $(document).on('click', function (e) {
-        $('[data-toggle="popover"],[data-original-title]').each(function () {
-            //the 'is' for buttons that trigger popups
-            //the 'has' for icons within a button that triggers a popup
-            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                (($(this).popover('hide').data('bs.popover') || {}).inState || {}).click = false  // fix for BS 3.3.6
-            }
-        });
-    });
+    /*
+     * AJAX
+     */
 
     // Source: https://realpython.com/blog/python/django-and-ajax-form-submissions/
     // This function gets cookie with a given name
@@ -104,20 +119,13 @@ $(function () {
         }
     });
 
-    // Submit post on submit
-    $('#submit_form').on('submit', function (event) {
-        event.preventDefault();
-        addItem();
-    });
-
     function displayErrorMessage(message, errorLevelClass) {
-        var ab = $('#alert-box');
-        ab.removeAttr("hidden");
-
-        ab.removeClass();
-        ab.addClass("alert alert-dismissable " + errorLevelClass);
-
-        $("#alert-text").html(message);
+        $('#alert-box-holder').html('<div id="alert-box" class="alert ' + errorLevelClass + ' alert-dismissable">\
+                <span id="alert-text">' + message + '</span>\
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                    <span aria-hidden="true">&times;</span>\
+                </button>\
+            </div>');
     }
 
     function displayErrorXHR(xhr, errorLevelClass) {
@@ -151,7 +159,7 @@ $(function () {
                 } else {
                     // add new list item
                     $("#main_list").append(
-                        '<li class="list-group-item grocery_item" id="' + id + '">\
+                        '<li class="list-group-item grocery_item row" id="' + id + '">\
                         <span class="label label-default">' + quantity + '</span>\
                         ' + name + '\
                         <button type="button" class="btn btn-xs pull-right trash-button" href="#{{ item.id }}">\
@@ -194,7 +202,7 @@ $(function () {
         });
     }
 
-    function grocery_visit() {
+    function groceryVisit() {
         var price = $("#price").val();
         var items = [];
 
@@ -208,6 +216,11 @@ $(function () {
         $(".grocery_item").each(function () {
             items.push($(this).attr("id"));
         });
+
+        if (items.length == 0) {
+            displayErrorMessage("You must have at least one item in your grocery visit.", "alert-warning");
+            return false;
+        }
 
         // send request
         $.ajax({
@@ -223,25 +236,26 @@ $(function () {
                 console.log(json);
                 $("#price").val("");
 
-                hideAllItems();
+                // hide all items
+                $(".grocery_item").each(function () {
+                    $(this).fadeOut(100);
+                });
 
                 // if an alert is displayed, remove it
                 var ab = $("#alert-box");
-                if (!ab[0].hasAttribute("hidden")) {
-                    ab.attr("hidden", "true");
+                if (ab.length != 0) {
+                    ab.remove();
                 }
+
+                // display success message
+                displayErrorMessage('Grocery visit saved. Click <a href="#" class="alert-link">here</a> to view.',
+                    "alert-success");
             },
 
             // handle a non-successful response
             error: function (xhr) {
                 displayErrorXHR(xhr, "alert-danger");
             }
-        });
-    }
-
-    function hideAllItems() {
-        $(".grocery_item").each(function () {
-            $(this).fadeOut(100);
         });
     }
 });

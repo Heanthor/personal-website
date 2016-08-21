@@ -43,8 +43,14 @@ def grocery_list(request):
 @require_http_methods(["POST"])
 def save_purchase(request):
     response = {"status": "Success"}
-    items = map(int, json.loads(request.POST.get("items")))
-    price = float(request.POST.get("price"))
+    items_raw = json.loads(request.POST.get("items"))
+    price_raw = request.POST.get("price")
+
+    if len(items_raw) == 0 or price_raw == "":
+        return False
+
+    items = map(int, items_raw)
+    price = float(price_raw)
 
     print("Price in: %d, items in: %s" % (price, items))
     gv = GroceryVisit(price=price)
