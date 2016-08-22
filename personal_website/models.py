@@ -10,11 +10,11 @@ class GroceryVisit(models.Model):
     """
     A grocery visit includes all the items purchased at that trip, as well as the price and date.
     """
-    price = models.IntegerField(default=1)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
     date_added = models.DateTimeField('date added to list', default=timezone.now)
 
     def __str__(self):
-        return "$%d purchased on %s" % (self.price, self.date_added)
+        return "$%s purchased on %s" % (self.price, self.date_added)
 
 
 @python_2_unicode_compatible

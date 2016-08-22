@@ -1,9 +1,9 @@
 import datetime
+import json
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone, dateformat
 
-from personal_website.models import Item
+from personal_website.models import Item, GroceryVisit
 
 
 def delete_item_ajax(request):
@@ -25,6 +25,9 @@ def add_item_ajax(request):
     response = {"item_name": item_name,
                 "item_quantity": item_quantity,
                 "date_added": date_added_str}
+
+    if item_name == "" or item_quantity == "":
+        return False
 
     # check if item in db already and is not archived
     results = Item.objects.filter(name=item_name).exclude(archived=True)
@@ -51,3 +54,33 @@ def add_item_ajax(request):
 
     response["status"] = "Success"
     return response
+
+
+def add_grocery_list(request):
+    response = {"status": "Success"}
+    items_raw = json.loads(request.POST.get("items"))
+    price_raw = request.POST.get("price")
+
+    if len(items_raw) == 0 or price_raw == "":
+        return False
+
+    items = map(int, items_raw)
+    price = float(price_raw)
+
+    print("Price in: %d, items in: %s" % (price, items))
+    gv = GroceryVisit(price=price)
+    gv.save()
+
+    # update all items purchased in this grocery visit
+    for item_id in items:
+        # added to a gv, archive this item
+        Item.objects.filter(id=item_id).update(grocery_visit=gv, archived=True)
+
+    return response
+
+
+def delete_grocery_list(request):
+    id_to_remove = request.POST.get("id")
+    GroceryVisit.objects.get(id=id_to_remove).delete()
+
+    return {"status": "Success"}

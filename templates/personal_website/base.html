@@ -43,8 +43,8 @@
                 <ul class="nav navbar-nav">
                     <li {% block nav-home %}{% endblock %}><a href="{% url 'index' %}">Home</a></li>
                     <li {% block nav-about %}{% endblock %}><a href="#about">About</a></li>
-                    <li {% block nav-contact %}{% endblock %}><a href="#contact">Contact</a></li>
                     <li {% block nav-grocery-list %}{% endblock %}><a href="{% url 'grocery_list' %}">Grocery List</a></li>
+                    <li {% block nav-gv %}{% endblock %}><a href="{% url 'grocery_visits' %}">Grocery Visits</a></li>
                 </ul>
             {% endblock %}
         </div><!--/.nav-collapse -->
@@ -63,5 +63,6 @@
 <script src="{% static "assets/js/ie10-viewport-bug-workaround.js" %}"></script>
 </body>
 </html>
-<script src="{% static "js/main.js" %}"></script>
+<script src="{% static "js/main.min.js" %}"></script>
 <script src="{% static "js/hoverIntent.min.js" %}"></script>
+{% block optionalJS %}{% endblock %}
