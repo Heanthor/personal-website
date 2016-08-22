@@ -43,11 +43,16 @@
                 <ul class="nav navbar-nav">
                     <li {% block nav-home %}{% endblock %}><a href="{% url 'index' %}">Home</a></li>
                     <li {% block nav-about %}{% endblock %}><a href="#about">About</a></li>
-                    <li {% block nav-grocery-list %}{% endblock %}><a href="{% url 'grocery_list' %}">Grocery List</a></li>
+                    <li {% block nav-grocery-list %}{% endblock %}><a href="{% url 'grocery_list' %}">Grocery List</a>
+                    </li>
                     <li {% block nav-gv %}{% endblock %}><a href="{% url 'grocery_visits' %}">Grocery Visits</a></li>
                 </ul>
             {% endblock %}
-        </div><!--/.nav-collapse -->
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            </ul>
+        </div>
     </div>
 </nav>
 {% block content %}{% endblock %}
@@ -61,6 +66,8 @@
 <script src="{% static "js/bootstrap.min.js" %}"></script>
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="{% static "assets/js/ie10-viewport-bug-workaround.js" %}"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 </body>
 </html>
 <script src="{% static "js/main.min.js" %}"></script>
