@@ -10,7 +10,7 @@
                 <div class="list-group-item row gv-entry" id="{{ visit.id }}">
                     <div class="col-md-6">
                         <h4><span
-                                class="text-muted text-danger">${{ visit.price }}</span>&nbsp;&nbsp;{{ visit.date_added }}
+                                class="text-muted price-text"><strong>${{ visit.price }}</strong></span>&nbsp;&nbsp;<em>{{ visit.date_added }}</em>
                         </h4>
                         {% for item in items %}
                             <p><span class="label label-default">{{ item.quantity }}</span> {{ item.name }}</p>

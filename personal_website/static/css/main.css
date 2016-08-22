@@ -11,6 +11,21 @@ body {
     max-width: 100%; /* Max Width of the popover (depending on the container!) */
 }
 
+.price-text {
+    font-size: 1.1em;
+    color: #d14330;
+    font-weight: 600;
+}
+
+h4 {
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: #2b3dc0;
+    border-color: #ccc;
+}
+
 /* custom navbar */
 .navbar-default {
     background-color: #3c6ee7;

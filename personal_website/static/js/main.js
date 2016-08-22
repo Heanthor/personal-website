@@ -26,7 +26,6 @@ $(function () {
      */
 
     var ml = $("#main_list");
-
     // trash button animation
     ml.on('click', '.trash-button', function () {
         $(this).find(".delete-text").show(200);
