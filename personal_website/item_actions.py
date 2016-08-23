@@ -26,8 +26,8 @@ def add_item_ajax(request):
                 "item_quantity": item_quantity,
                 "date_added": date_added_str}
 
-    if item_name == "" or item_quantity == "":
-        return False
+    if item_name == "" or item_quantity == "" or int(item_quantity) > 50:
+        return {"status": "Failure"}
 
     # check if item in db already and is not archived
     results = Item.objects.filter(name=item_name).exclude(archived=True)
@@ -62,7 +62,7 @@ def add_grocery_list(request):
     price_raw = request.POST.get("price")
 
     if len(items_raw) == 0 or price_raw == "":
-        return False
+        return {"status": "Failure"}
 
     items = map(int, items_raw)
     price = float(price_raw)

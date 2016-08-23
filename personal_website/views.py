@@ -13,8 +13,20 @@ from personal_website.item_actions import delete_item_ajax, add_item_ajax, add_g
 from django.views.decorators.http import require_http_methods
 
 
+@require_http_methods(["GET"])
 def index(request):
     return HttpResponse(render(request, "personal_website/index.html"))
+
+
+@require_http_methods(["POST"])
+def sign_up(request):
+    print(request.POST.get("email"))
+    print(request.POST.get("password"))
+
+
+@require_http_methods(["POST"])
+def log_in(request):
+    pass
 
 
 def grocery_list(request):

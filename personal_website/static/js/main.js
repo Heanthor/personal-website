@@ -10,6 +10,20 @@ $(function () {
         }
     });
 
+    $('#signup-button').popover({
+        html: true,
+        content: function () {
+            return $("#signup-button-content").html();
+        }
+    });
+
+    $('#login-button').popover({
+        html: true,
+        content: function () {
+            return $("#login-button-content").html();
+        }
+    });
+
     // close popover by clicking outside of box
     $(document).on('click', function (e) {
         $('[data-toggle="popover"],[data-original-title]').each(function () {
@@ -24,7 +38,6 @@ $(function () {
     /*
      * Listeners
      */
-
     var ml = $("#main_list");
     // trash button animation
     ml.on('click', '.trash-button', function () {
@@ -113,6 +126,7 @@ $(function () {
                 // Send the token to same-origin, relative URLs only.
                 // Send the token only if the method warrants CSRF protection
                 // Using the CSRFToken value acquired earlier
+
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
         }
@@ -257,4 +271,22 @@ $(function () {
             }
         });
     }
+
+    var signupForm = $("#signup-form");
+    $(".navbar-right").on('submit', '#signup-form', function(event) {
+        event.preventDefault();
+        console.log(signupForm.serialize());
+        $.ajax({
+            url: signupForm.attr('action'),
+            type: signupForm.attr('method'),
+            data: signupForm.serialize(),
+            success: function() {
+
+            },
+
+            error: function(xhr) {
+                displayErrorXHR(xhr, "alert-danger")
+            }
+        });
+    });
 });
